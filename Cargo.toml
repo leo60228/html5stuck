@@ -1,0 +1,2 @@
+[workspace]
+members = ["html5stuck_scraper", "html5stuck_common"]
