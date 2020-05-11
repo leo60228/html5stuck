@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<title>{% block title %}html5stuck{% endblock %}</title>
+<style>
+#pesterlog:not(.opened) {
+    display: none;
+}
+
+#pesterlog {
+    background: lightgray;
+    border: 2px solid darkgray;
+    padding: 1em;
+}
+
+#open-pesterlog {
+    display: block;
+}
+</style>
+    </head>
+    <body>
+{% block content %}{% endblock %}
+    </body>
+</html>

@@ -1,2 +1,2 @@
 [workspace]
-members = ["html5stuck_scraper", "html5stuck_common"]
+members = ["html5stuck_scraper", "html5stuck_common", "html5stuck_renderer"]

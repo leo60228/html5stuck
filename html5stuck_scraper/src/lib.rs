@@ -100,7 +100,11 @@ pub fn scrape_page(html: &str) -> Result<Page> {
                 .ok_or_else(|| anyhow!("Invalid <a>!"))?,
         )?
     } else {
-        let next = base_url.join(&format!("/story/{}", num + 1))?;
+        let next = if num == 8130 {
+            base_url.clone()
+        } else {
+            base_url.join(&format!("/story/{}", num + 1))?
+        };
         let theme = if title.as_deref() == Some("[???????]") {
             Theme::Password
         } else {

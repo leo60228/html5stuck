@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{%- block title -%}
+{{ page.title.as_deref().unwrap_or("Homestuck")|safe }}
+{%- endblock %}
+
+{% block content %}
+{%- match page.title -%}
+{%- when Some with (title) -%}
+<h1 class="command">{{ title|safe }}</h1>
+{%- when None -%}
+{%- endmatch %}
+
+{% match page.contents -%}
+{%- when Some with (contents) -%}
+<p class="body">{{ contents|safe }}</p>
+{%- when None -%}
+{%- endmatch %}
+
+{% match page.pesterlog -%}
+{%- when Some with (pesterlog) -%}
+<button id="open-pesterlog" data-typ="{{ pesterlog.typ }}">Show {{ pesterlog.typ }}</button>
+<div id="pesterlog">{{ pesterlog.contents|safe }}</div>
+
+<script>
+let pesterlogBtn = document.getElementById('open-pesterlog');
+let pesterlog = document.getElementById('pesterlog');
+
+if (pesterlogBtn !== null && pesterlog !== null) {
+    let typ = pesterlogBtn.getAttribute('data-typ');
+    let shown = false;
+    pesterlogBtn.addEventListener('click', () => {
+        shown = !shown;
+        if (shown) {
+            pesterlogBtn.innerHTML = `Hide ${typ}`;
+            pesterlog.classList.add('opened');
+        } else {
+            pesterlogBtn.innerHTML = `Show ${typ}`;
+            pesterlog.classList.remove('opened');
+        }
+    });
+}
+</script>
+{%- when None -%}
+{%- endmatch %}
+
+<a class="next" href="{{ next.num }}.html">{{ next.title.as_deref().unwrap_or("==>")|safe }}</a>
+{%- endblock -%}
