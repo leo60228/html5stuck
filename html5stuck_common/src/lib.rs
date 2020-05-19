@@ -24,6 +24,7 @@ pub struct Page {
     pub contents: Option<String>,
     pub pesterlog: Option<Pesterlog>,
     pub story_next: Option<Url>,
+    pub story_prev: Option<Url>,
     pub next: Url,
     pub theme: Theme,
 }

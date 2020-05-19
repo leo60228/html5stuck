@@ -5,6 +5,14 @@ use std::fs::{self, File};
 use std::io::BufReader;
 use std::path::Path;
 
+mod filters {
+    use url::Url;
+
+    pub fn last_segment(url: &Url) -> askama::Result<&str> {
+        Ok(url.path_segments().unwrap().rev().next().unwrap())
+    }
+}
+
 #[derive(Template)]
 #[template(path = "page.html")]
 struct PageTemplate<'a> {
@@ -28,6 +36,7 @@ fn parse_page_file(path: &Path) -> Result<Page> {
 pub fn batch_render(path: impl AsRef<Path>, output: impl AsRef<Path>) -> Result<()> {
     let path = path.as_ref();
     let output = output.as_ref();
+    fs::create_dir_all(output.join("story"))?;
     for file in fs::read_dir(path).context("Getting directory listing")? {
         let file = file.context("Iterating over directory listing")?;
         println!("{:?}", file.file_name());
@@ -41,7 +50,7 @@ pub fn batch_render(path: impl AsRef<Path>, output: impl AsRef<Path>) -> Result<
         let next = parse_page_file(&path.join(format!("{}.json", next_num)))
             .context("Parsing next page")?;
         let rendered = render_page(&current, &next).context("Rendering page")?;
-        fs::write(&output.join(format!("{}.html", current.num)), &rendered)
+        fs::write(&output.join(format!("story/{}.html", current.num)), &rendered)
             .context("Writing rendered")?;
     }
     Ok(())

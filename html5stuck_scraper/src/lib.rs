@@ -1,13 +1,16 @@
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, Error, Result};
 use html5stuck_common::{Page, Pesterlog, Theme};
 use once_cell::sync::Lazy;
+use retry::{delay::Fixed, retry};
 use scraper::{Html, Selector};
+use std::result::Result as StdResult;
 use url::Url;
 
 pub fn scrape_page(html: &str) -> Result<Page> {
     let doc = Html::parse_document(html);
     static CONSTANTS: Lazy<(
         Url,
+        Selector,
         Selector,
         Selector,
         Selector,
@@ -26,6 +29,9 @@ pub fn scrape_page(html: &str) -> Result<Page> {
         let combo_img_sel = Selector::parse(r#"img[alt="Act6act5act1x2combo"]"#).unwrap();
         let combo_sel = Selector::parse("td.bg-hs-gray:last-child").unwrap();
         let canonical_sel = Selector::parse(r#"link[rel="canonical"]"#).unwrap();
+        let back_sel =
+            Selector::parse("ul:not(.o_game-options) > li.o_game-nav-item > a:not(#o_start-over)")
+                .unwrap();
         (
             base_url,
             title_sel,
@@ -36,6 +42,7 @@ pub fn scrape_page(html: &str) -> Result<Page> {
             combo_img_sel,
             combo_sel,
             canonical_sel,
+            back_sel,
         )
     });
     let (
@@ -48,6 +55,7 @@ pub fn scrape_page(html: &str) -> Result<Page> {
         combo_img_sel,
         combo_sel,
         canonical_sel,
+        back_sel,
     ) = &*CONSTANTS;
     let num: usize = doc
         .select(&canonical_sel)
@@ -56,6 +64,17 @@ pub fn scrape_page(html: &str) -> Result<Page> {
         .and_then(|x| x.rsplit('/').next())
         .ok_or_else(|| anyhow!("Missing canonical link!"))?
         .parse()?;
+    let story_prev = if let Some(elem) = doc.select(&back_sel).last() {
+        Some(
+            base_url.join(
+                elem.value()
+                    .attr("href")
+                    .ok_or_else(|| anyhow!("Invalid <a>!"))?,
+            )?,
+        )
+    } else {
+        None
+    };
     let title = doc.select(&title_sel).next().map(|x| x.inner_html());
     let contents = doc.select(&contents_sel).next().map(|x| x.inner_html());
     let pesterlog_type = doc
@@ -121,6 +140,7 @@ pub fn scrape_page(html: &str) -> Result<Page> {
             contents,
             pesterlog: None,
             story_next: None,
+            story_prev,
             next,
             theme,
         });
@@ -142,6 +162,7 @@ pub fn scrape_page(html: &str) -> Result<Page> {
         contents,
         pesterlog,
         story_next,
+        story_prev,
         next,
         theme,
     })
@@ -151,11 +172,13 @@ pub fn scrape_url(url: &str) -> Result<Page> {
     scrape_page(&attohttpc::get(url).send()?.text()?)
 }
 
-pub fn scrape_site(start: &str) -> impl Iterator<Item = Result<Page>> {
-    let first_page = scrape_url(start);
+pub fn scrape_site(start: &str) -> impl Iterator<Item = StdResult<Page, retry::Error<Error>>> {
+    let first_page = retry(Fixed::from_millis(15000).take(3), || scrape_url(start));
     std::iter::successors(Some(first_page), |last| {
         if let Ok(x) = last {
-            Some(scrape_url(x.next.as_str()))
+            Some(retry(Fixed::from_millis(15000).take(3), || {
+                scrape_url(x.next.as_str())
+            }))
         } else {
             None
         }

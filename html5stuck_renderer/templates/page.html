@@ -11,18 +11,21 @@
 {%- when None -%}
 {%- endmatch %}
 
-{% match page.contents -%}
-{%- when Some with (contents) -%}
-<p class="body">{{ contents|safe }}</p>
-{%- when None -%}
-{%- endmatch %}
+<main>
+    <img src="https://www.homestuck.com/images/storyfiles/hs2/00001.gif">
 
-{% match page.pesterlog -%}
-{%- when Some with (pesterlog) -%}
-<button id="open-pesterlog" data-typ="{{ pesterlog.typ }}">Show {{ pesterlog.typ }}</button>
-<div id="pesterlog">{{ pesterlog.contents|safe }}</div>
+    {% match page.contents -%}
+    {%- when Some with (contents) -%}
+    <p class="body">{{ contents|safe }}</p>
+    {%- when None -%}
+    {%- endmatch %}
 
-<script>
+    {% match page.pesterlog -%}
+    {%- when Some with (pesterlog) -%}
+    <button id="open-pesterlog" data-typ="{{ pesterlog.typ }}">Show {{ pesterlog.typ }}</button>
+    <div id="pesterlog">{{ pesterlog.contents|safe }}</div>
+
+    <script>
 let pesterlogBtn = document.getElementById('open-pesterlog');
 let pesterlog = document.getElementById('pesterlog');
 
@@ -40,9 +43,37 @@ if (pesterlogBtn !== null && pesterlog !== null) {
         }
     });
 }
-</script>
-{%- when None -%}
-{%- endmatch %}
+    </script>
+    {%- when None -%}
+    {%- endmatch %}
+</main>
 
 <a class="next" href="{{ next.num }}.html">{{ next.title.as_deref().unwrap_or("==>")|safe }}</a>
+
+<nav>
+    <a href="1.html">Start Over</a>
+    {% match page.story_prev -%}
+    {%- when Some with (story_prev) -%}
+    |
+    <a href="{{ story_prev|last_segment }}.html" id="back">Go Back</a>
+    {%- when None -%}
+    {%- endmatch %}
+</nav>
+
+<script>
+let next = document.querySelector('.next');
+let back = document.getElementById('back');
+
+document.addEventListener("keydown", event => {
+    if (event.isComposing || event.keyCode === 229) {
+        return;
+    }
+
+    if (back !== null && event.key === 'ArrowLeft') {
+        back.click();
+    } else if (next !== null && event.key === 'ArrowRight') {
+        next.click();
+    }
+});
+</script>
 {%- endblock -%}
