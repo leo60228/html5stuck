@@ -41,6 +41,11 @@ pub fn batch_render(path: impl AsRef<Path>, output: impl AsRef<Path>) -> Result<
     fs::create_dir_all(output.join("story"))?;
     let files: Vec<_> = fs::read_dir(path)
         .context("Getting directory listing")?
+        .filter(|x| {
+            x.as_ref()
+                .map(|x| x.path().extension().map(|x| x == "json").unwrap_or(false))
+                .unwrap_or(true)
+        })
         .collect();
     let len = files.len() as _;
     let pb = ProgressBar::new(len);

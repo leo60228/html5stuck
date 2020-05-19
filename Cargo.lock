@@ -392,6 +392,7 @@ dependencies = [
  "indicatif",
  "once_cell",
  "openssl",
+ "rayon",
  "retry",
  "scraper",
  "serde_json",
