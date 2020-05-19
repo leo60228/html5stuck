@@ -150,12 +150,13 @@ pub fn scrape_page(html: &str) -> Result<Page> {
         .and_then(|x| x.rev().next())
         .ok_or_else(|| anyhow!("Pathless link!"))?
         .parse()?;
-    let (next, story_next) = if next_num <= num {
-        let real_next = base_url.join(&format!("/story/{}", num + 1))?;
-        (real_next, Some(next))
-    } else {
-        (next, None)
-    };
+    let (next, story_next) =
+        if (next_num <= num || next_num > num + 2 || next_num == 4827) && next_num != 7905 {
+            let real_next = base_url.join(&format!("/story/{}", num + 1))?;
+            (real_next, Some(next))
+        } else {
+            (next, None)
+        };
     Ok(Page {
         num,
         title,
