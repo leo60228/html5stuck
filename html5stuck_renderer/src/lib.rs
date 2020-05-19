@@ -1,7 +1,8 @@
 use anyhow::{anyhow, Context as _, Result};
 use askama::Template;
 use html5stuck_common::Page;
-use indicatif::{ProgressBar, ProgressStyle};
+use indicatif::{ParallelProgressIterator, ProgressBar, ProgressStyle};
+use rayon::prelude::*;
 use std::fs::{self, File};
 use std::io::BufReader;
 use std::path::Path;
@@ -46,24 +47,29 @@ pub fn batch_render(path: impl AsRef<Path>, output: impl AsRef<Path>) -> Result<
     pb.set_style(ProgressStyle::default_bar().template("{msg} {wide_bar} {pos}/{len}"));
     pb.set_message("Generating story pages");
     pb.set_draw_delta(len / 50);
-    for file in pb.wrap_iter(files.into_iter()) {
-        let file = file.context("Iterating over directory listing")?;
-        let current = parse_page_file(&file.path()).context("Parsing current page")?;
-        let next_num: usize = current
-            .next
-            .path_segments()
-            .and_then(|x| x.rev().next())
-            .ok_or_else(|| anyhow!("Pathless link!"))?
-            .parse()?;
-        let next = parse_page_file(&path.join(format!("{}.json", next_num)))
-            .context("Parsing next page")?;
-        let rendered = render_page(&current, &next).context("Rendering page")?;
-        fs::write(
-            &output.join(format!("story/{}.html", current.num)),
-            &rendered,
-        )
-        .context("Writing rendered")?;
-    }
+    files
+        .into_par_iter()
+        .progress_with(pb.clone())
+        .map(|file| {
+            let file = file.context("Iterating over directory listing")?;
+            let current = parse_page_file(&file.path()).context("Parsing current page")?;
+            let next_num: usize = current
+                .next
+                .path_segments()
+                .and_then(|x| x.rev().next())
+                .ok_or_else(|| anyhow!("Pathless link!"))?
+                .parse()?;
+            let next = parse_page_file(&path.join(format!("{}.json", next_num)))
+                .context("Parsing next page")?;
+            let rendered = render_page(&current, &next).context("Rendering page")?;
+            fs::write(
+                &output.join(format!("story/{}.html", current.num)),
+                &rendered,
+            )
+            .context("Writing rendered")?;
+            Ok(())
+        })
+        .collect::<Result<()>>()?;
     pb.finish();
     Ok(())
 }
