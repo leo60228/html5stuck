@@ -11,13 +11,15 @@
     },
     "devDependencies": {
         "cssnano": "^4.1.10",
-        "http-server": "^0.12.3",
+        "delay-cli": "^1.1.0",
+        "open-cli": "^6.0.1",
         "postcss-advanced-variables": "^3.0.1",
         "postcss-calc": "^7.0.2",
         "postcss-cli": "^7.1.1",
         "postcss-nested": "^4.2.1",
         "postcss-preset-env": "^6.7.0",
         "rimraf": "^3.0.2",
+        "serve": "^11.3.0",
         "stylefmt": "^6.0.3"
     },
     "scripts": {
@@ -25,8 +27,11 @@
         "build": "yarn run clean && yarn run build:html && yarn run build:css",
         "build:html": "cargo run --release --bin html5stuck_renderer -- output/ html5/",
         "build:css": "postcss css/ --dir html5/css/",
-        "serve": "yarn run build && http-server -a 127.0.0.1 --cors html5/",
-        "open": "yarn run build && http-server -a 127.0.0.1 --cors -o /story/1.html html5/"
+        "serve": "yarn run build && yarn run serve:no-build",
+        "serve:no-build": "serve -l 8080 html5/",
+        "open": "yarn run build && yarn run open:no-build",
+        "open:no-build": "yarn run open:no-serve & yarn run serve:no-build",
+        "open:no-serve": "delay 1 && open-cli http://127.0.0.1:8080/story/1.html"
     },
     "browserslist": [
         "cover 99.5% in US and last 2 versions",
