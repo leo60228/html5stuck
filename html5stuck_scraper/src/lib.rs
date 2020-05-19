@@ -168,17 +168,35 @@ pub fn scrape_page(html: &str) -> Result<Page> {
     })
 }
 
-pub fn scrape_url(url: &str) -> Result<Page> {
-    scrape_page(&attohttpc::get(url).send()?.text()?)
+pub fn scrape_url(cache_dir: Option<&str>, url: &str) -> Result<(String, Page)> {
+    let cached = cache_dir
+        .and_then(|d| Some(format!("{}/{}.html", d, url.rsplit('/').next()?)))
+        .and_then(|x| std::fs::read_to_string(x).ok());
+    let html = if let Some(html) = cached {
+        html
+    } else {
+        attohttpc::get(url).send()?.text()?
+    };
+    let page = scrape_page(&html)?;
+    Ok((html, page))
 }
 
-pub fn scrape_site(start: &str) -> impl Iterator<Item = StdResult<Page, retry::Error<Error>>> {
-    let first_page = retry(Fixed::from_millis(15000).take(3), || scrape_url(start));
-    std::iter::successors(Some(first_page), |last| {
-        if let Ok(x) = last {
-            Some(retry(Fixed::from_millis(15000).take(3), || {
-                scrape_url(x.next.as_str())
-            }))
+pub fn scrape_site<'a>(
+    cache_dir: Option<&'a str>,
+    start: &str,
+) -> impl Iterator<Item = StdResult<(String, Page), retry::Error<Error>>> + 'a {
+    let first_page = retry(Fixed::from_millis(15000).take(3), || {
+        scrape_url(cache_dir, start)
+    });
+    std::iter::successors(Some(first_page), move |last| {
+        if let Ok((_, x)) = last {
+            if x.next.path_segments().and_then(|x| x.rev().next()) == Some("1") {
+                None
+            } else {
+                Some(retry(Fixed::from_millis(15000).take(3), || {
+                    scrape_url(cache_dir, x.next.as_str())
+                }))
+            }
         } else {
             None
         }
