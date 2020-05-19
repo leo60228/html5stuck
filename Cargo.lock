@@ -389,6 +389,7 @@ dependencies = [
  "anyhow",
  "attohttpc",
  "html5stuck_common",
+ "indicatif",
  "once_cell",
  "openssl",
  "retry",
