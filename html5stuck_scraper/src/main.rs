@@ -7,7 +7,6 @@ fn linked_list(start: &str, output: &str) {
     let pb = ProgressBar::new(len);
     pb.set_style(ProgressStyle::default_bar().template("{msg} {wide_bar} {pos}/{len}"));
     pb.set_message("Downloading and scraping site");
-    pb.set_draw_delta(len / 50);
     for x in pb.wrap_iter(scrape_site(Some(output), start)) {
         let (html, x) = x.unwrap();
         let out_path = format!("{}/{}.json", output, x.num);
@@ -45,6 +44,10 @@ fn main() {
     let mut args = std::env::args().skip(1);
     let start = args.next().unwrap();
     let output = args.next().unwrap();
+    let new = args.next().as_deref() == Some("--new");
+    if new && std::path::Path::new(&output).exists() {
+        return;
+    }
     std::fs::create_dir_all(&output).unwrap();
     if std::fs::read_dir(&output).unwrap().count() >= 16108 {
         freshen(&output);

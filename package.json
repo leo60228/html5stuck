@@ -24,8 +24,10 @@
     },
     "scripts": {
         "clean": "rimraf html5",
-        "build": "yarn run clean && yarn run build:html && yarn run build:css",
-        "build:html": "cargo run --release --bin html5stuck_renderer -- output/ html5/",
+        "scrape": "cargo run --quiet --release --bin html5stuck_scraper -- 'https://homestuck.com/story/1' output/",
+        "scrape:new": "cargo run --quiet --release --bin html5stuck_scraper -- 'https://homestuck.com/story/1' output/ --new",
+        "build": "yarn run scrape:new && yarn run clean && yarn run build:html && yarn run build:css",
+        "build:html": "cargo run --quiet --release --bin html5stuck_renderer -- output/ html5/",
         "build:css": "postcss css/ --dir html5/css/",
         "serve": "yarn run build && yarn run serve:no-build",
         "serve:no-build": "serve -l 8080 html5/",
