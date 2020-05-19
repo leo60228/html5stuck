@@ -1,0 +1,106 @@
+@font-face {
+    font-family: "courier-std-bold";
+    src: url("https://use.typekit.net/af/fec4eb/0000000000000000000131bd/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff2"),url("https://use.typekit.net/af/fec4eb/0000000000000000000131bd/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff"),url("https://use.typekit.net/af/fec4eb/0000000000000000000131bd/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("opentype");
+    font-display: auto;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "courier-std-bold";
+    src: url("https://use.typekit.net/af/3741dd/0000000000000000000131be/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i7&v=3") format("woff2"),url("https://use.typekit.net/af/3741dd/0000000000000000000131be/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i7&v=3") format("woff"),url("https://use.typekit.net/af/3741dd/0000000000000000000131be/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i7&v=3") format("opentype");
+    font-display: auto;
+    font-style: italic;
+}
+
+#pesterlog {
+    &:not(.opened) {
+        display: none;
+    }
+
+    background: lightgray;
+    border: 2px solid darkgray;
+    padding: 1em;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+#open-pesterlog {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: #444;
+}
+
+header {
+    background: #aaa;
+    text-align: center;
+}
+
+#content {
+    margin-left: auto;
+    margin-right: auto;
+    background: #ccc;
+    padding: 0.75em;
+    max-width: 650px;
+}
+
+#content img {
+    width: 100%;
+    image-rendering: crisp-edges;
+}
+
+main, #content h1 {
+    font-family: "courier-std-bold", monospace;
+    font-weight: normal;
+}
+
+a.next {
+    &::before {
+        content: ">\00a0";
+        display: inline-block;
+        color: black;
+        cursor: default;
+    }
+
+    font-family: sans-serif;
+    font-size: 1.35em;
+}
+
+h1.command {
+    text-align: center;
+    margin-bottom: 0.475em;
+    margin-top: 0;
+}
+
+@for $size from 5 to 20 by 5 {
+    #content.size-$size {
+        max-width: calc(650px * ($size / 10.0));
+    }
+}
+
+@media (min-width: 1650px) and (min-resolution: 2dppx) {
+    #content {
+        max-width: 975px;
+    }
+}
+
+nav {
+    font-family: sans-serif;
+}
+
+header nav {
+    text-transform: uppercase;
+    font-size: 0.8em;
+}
+
+#content nav {
+    margin-top: 1em;
+    margin-left: 1ex;
+    font-size: 0.7em;
+}
+

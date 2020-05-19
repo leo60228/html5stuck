@@ -1,0 +1,36 @@
+{
+    "name": "html5stuck",
+    "version": "1.0.0",
+    "main": "index.js",
+    "repository": "https://github.com/leo60228/html5stuck.git",
+    "author": "leo60228 <leo@60228.dev>",
+    "license": "MIT OR Apache-2.0",
+    "private": true,
+    "installConfig": {
+        "pnp": true
+    },
+    "devDependencies": {
+        "cssnano": "^4.1.10",
+        "http-server": "^0.12.3",
+        "postcss-advanced-variables": "^3.0.1",
+        "postcss-calc": "^7.0.2",
+        "postcss-cli": "^7.1.1",
+        "postcss-nested": "^4.2.1",
+        "postcss-preset-env": "^6.7.0",
+        "rimraf": "^3.0.2",
+        "stylefmt": "^6.0.3"
+    },
+    "scripts": {
+        "clean": "rimraf html5",
+        "build": "yarn run clean && yarn run build:html && yarn run build:css",
+        "build:html": "cargo run --release --bin html5stuck_renderer -- output/ html5/",
+        "build:css": "postcss css/ --dir html5/css/",
+        "serve": "yarn run build && http-server -a 127.0.0.1 --cors html5/",
+        "open": "yarn run build && http-server -a 127.0.0.1 --cors -o /story/1.html html5/"
+    },
+    "browserslist": [
+        "cover 99.5% in US and last 2 versions",
+        "not ie > 0",
+        "not dead"
+    ]
+}

@@ -2,3 +2,7 @@ output
 target
 html5
 *.zip
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
