@@ -2,6 +2,13 @@ use html5stuck_scraper::{scrape_page, scrape_site};
 use indicatif::{ParallelProgressIterator, ProgressBar, ProgressStyle};
 use rayon::prelude::*;
 
+#[cfg(not(target_env = "msvc"))]
+use jemallocator::Jemalloc;
+
+#[cfg(not(target_env = "msvc"))]
+#[global_allocator]
+static GLOBAL: Jemalloc = Jemalloc;
+
 fn linked_list(start: &str, output: &str) {
     let len = 8054;
     let pb = ProgressBar::new(len);
