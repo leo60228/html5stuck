@@ -3,6 +3,7 @@ use askama::Template;
 use html5stuck_common::Page;
 use indicatif::{ParallelProgressIterator, ProgressBar, ProgressStyle};
 use rayon::prelude::*;
+use std::env;
 use std::fs::{self, File};
 use std::io::BufReader;
 use std::path::Path;
@@ -24,7 +25,13 @@ struct PageTemplate<'a> {
 
 pub fn render_page(page: &Page, next: &Page) -> Result<String> {
     let template = PageTemplate { page, next };
-    Ok(template.render()?)
+    let rendered = template.render()?;
+    if env::var("NODE_ENV").ok().as_deref() == Some("production") {
+        let minified = html_minifier::minify(&rendered).map_err(|x| anyhow!("{}", x))?;
+        Ok(minified)
+    } else {
+        Ok(rendered)
+    }
 }
 
 fn parse_page_file(path: &Path) -> Result<Page> {

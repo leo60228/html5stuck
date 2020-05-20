@@ -1,5 +1,23 @@
 <nav>
-    <a href=".">html5stuck</a>
-    |
-    <a href="1.html">Read</a>
+    <ul>
+        <li><a href=".">html5stuck</a></li>
+        <li><a href="1.html">Read</a></li>
+        <li class="jsonly">
+            Options
+            <ul>
+                <li>
+                    Image Size:
+                    <span class="horizontal-radio">
+                        {% let sizes = [5, 10, 15, 20] %}
+                        {% for size in sizes %}
+                        <span>
+                            <input id="size-{{ size }}-radio" type="radio" name="img-size" value="size-{{ size }}-radio" data-size="{{ size }}">
+                            <label for="size-{{ size }}-radio">{{ size.clone().into() / 10.0 }}x</label>
+                        </span>
+                        {% endfor %}
+                    </span>
+                </li>
+            </ul>
+        </li>
+    </ul>
 </nav>

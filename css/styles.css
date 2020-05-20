@@ -1,3 +1,5 @@
+/* vi: set ft=scss: */
+
 @font-face {
     font-family: "courier-std-bold";
     src: url("https://use.typekit.net/af/fec4eb/0000000000000000000131bd/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff2"),url("https://use.typekit.net/af/fec4eb/0000000000000000000131bd/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff"),url("https://use.typekit.net/af/fec4eb/0000000000000000000131bd/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("opentype");
@@ -96,6 +98,42 @@ nav {
 header nav {
     text-transform: uppercase;
     font-size: 0.8em;
+
+    ul {
+        margin: 0;
+        padding: 0;
+    }
+
+    li:hover {
+        cursor: pointer;
+    }
+
+    > ul > li {
+        display: inline-block;
+        list-style: none;
+
+        &::after {
+            content: " |";
+        }
+
+        &:last-child::after {
+            content: none;
+        }
+
+        > ul {
+            visibility: hidden;
+            display: none;
+            position: absolute;
+            background: #aaa;
+            list-style: none;
+            text-transform: initial;
+        }
+
+        &:hover > ul, & > ul:focus-within, & > ul:hover {
+            visibility: visible;
+            display: block;
+        }
+    }
 }
 
 #content nav {
@@ -104,3 +142,18 @@ header nav {
     font-size: 0.7em;
 }
 
+.horizontal-radio {
+    background: #777;
+
+    input[type="radio"] {
+        position: fixed;
+        opacity: 0;
+
+        &:checked ~ label {
+            background: #444;
+            color: white;
+        }
+    }
+
+    cursor: pointer;
+}

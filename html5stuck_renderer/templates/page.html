@@ -25,25 +25,6 @@
     <button id="open-pesterlog" data-typ="{{ pesterlog.typ }}">Show {{ pesterlog.typ }}</button>
     <div id="pesterlog">{{ pesterlog.contents|safe }}</div>
 
-    <script>
-let pesterlogBtn = document.getElementById('open-pesterlog');
-let pesterlog = document.getElementById('pesterlog');
-
-if (pesterlogBtn !== null && pesterlog !== null) {
-    let typ = pesterlogBtn.getAttribute('data-typ');
-    let shown = false;
-    pesterlogBtn.addEventListener('click', () => {
-        shown = !shown;
-        if (shown) {
-            pesterlogBtn.innerHTML = `Hide ${typ}`;
-            pesterlog.classList.add('opened');
-        } else {
-            pesterlogBtn.innerHTML = `Show ${typ}`;
-            pesterlog.classList.remove('opened');
-        }
-    });
-}
-    </script>
     {%- when None -%}
     {%- endmatch %}
 </main>
@@ -60,20 +41,4 @@ if (pesterlogBtn !== null && pesterlog !== null) {
     {%- endmatch %}
 </nav>
 
-<script>
-let next = document.querySelector('.next');
-let back = document.getElementById('back');
-
-document.addEventListener("keydown", event => {
-    if (event.isComposing || event.keyCode === 229) {
-        return;
-    }
-
-    if (back !== null && event.key === 'ArrowLeft') {
-        back.click();
-    } else if (next !== null && event.key === 'ArrowRight') {
-        next.click();
-    }
-});
-</script>
 {%- endblock -%}

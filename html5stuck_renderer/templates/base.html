@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html>
     <head>
-	<title>{% block title %}html5stuck{% endblock %}</title>
-	<link rel="stylesheet" href="/css/styles.css">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}html5stuck{% endblock %}</title>
+        <link rel="stylesheet" href="/css/styles.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script defer src="/js/scripts.js"></script>
+        <noscript>
+            <style>.jsonly { display: none; }</style>
+        </noscript>
     </head>
     <body>
-	<header>
-{% block nav %}{% include "nav.html" %}{% endblock %}
-	</header>
-	<div id="content">
-{% block content %}{% endblock %}
-	</div>
+        <header>
+            {% block nav %}{% include "nav.html" %}{% endblock %}
+        </header>
+        <div id="content">
+            {% block content %}{% endblock %}
+        </div>
     </body>
 </html>

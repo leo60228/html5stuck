@@ -6,3 +6,5 @@ html5
 !.yarn/releases
 !.yarn/plugins
 .pnp.*
+node_modules/
+.pnp
