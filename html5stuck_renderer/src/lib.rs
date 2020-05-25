@@ -14,6 +14,10 @@ mod filters {
     pub fn last_segment(url: &Url) -> askama::Result<&str> {
         Ok(url.path_segments().unwrap().rev().next().unwrap())
     }
+
+    pub fn fix_domains(text: &str) -> askama::Result<String> {
+        Ok(text.replace("http://www.mspaintadventures.com", ""))
+    }
 }
 
 #[derive(Template)]

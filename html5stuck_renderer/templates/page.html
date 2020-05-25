@@ -16,14 +16,14 @@
 
     {% match page.contents -%}
     {%- when Some with (contents) -%}
-    <p class="body">{{ contents|safe }}</p>
+    <p class="body">{{ contents|fix_domains|safe }}</p>
     {%- when None -%}
     {%- endmatch %}
 
     {% match page.pesterlog -%}
     {%- when Some with (pesterlog) -%}
     <button id="open-pesterlog" data-typ="{{ pesterlog.typ }}">Show {{ pesterlog.typ }}</button>
-    <div id="pesterlog">{{ pesterlog.contents|safe }}</div>
+    <div id="pesterlog">{{ pesterlog.contents|fix_domains|safe }}</div>
 
     {%- when None -%}
     {%- endmatch %}
