@@ -6,7 +6,7 @@ use rayon::prelude::*;
 use std::env;
 use std::fs::{self, File};
 use std::io::BufReader;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 mod filters {
     use url::Url;
@@ -41,7 +41,18 @@ pub fn render_page(page: &Page, next: &Page) -> Result<String> {
 fn parse_page_file(path: &Path) -> Result<Page> {
     let file = File::open(path).context("Opening file")?;
     let reader = BufReader::new(file);
-    let page = serde_json::from_reader(reader).context("Parsing JSON")?;
+
+    let mut patch_path = PathBuf::from("./patches/");
+    patch_path.push(path.file_name().unwrap());
+    let page = if let Ok(file) = File::open(&patch_path) {
+        let patch_reader = BufReader::new(file);
+        let patch = serde_json::from_reader(patch_reader).context("Parsing JSON patch")?;
+        let mut value = serde_json::from_reader(reader).context("Parsing JSON")?;
+        json_patch::patch(&mut value, &patch)?;
+        serde_json::value::from_value(value).context("Deserializing JSON")?
+    } else {
+        serde_json::from_reader(reader).context("Parsing JSON")?
+    };
 
     Ok(page)
 }
