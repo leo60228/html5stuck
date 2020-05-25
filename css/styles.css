@@ -158,3 +158,7 @@ header nav {
 
     cursor: pointer;
 }
+
+.foam {
+    filter: blur(1.25px);
+}
