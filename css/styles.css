@@ -52,7 +52,7 @@ header {
     max-width: 650px;
 }
 
-#content img {
+#content > main > img {
     width: 100%;
     image-rendering: crisp-edges;
 }

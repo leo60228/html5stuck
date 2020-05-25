@@ -35,10 +35,11 @@
         "clean": "rimraf html5",
         "scrape": "cargo run --quiet --release --bin html5stuck_scraper -- 'https://homestuck.com/story/1' output/",
         "scrape:new": "cargo run --quiet --release --bin html5stuck_scraper -- 'https://homestuck.com/story/1' output/ --new",
-        "build": "yarn run scrape:new && yarn run clean && mkdir html5 && concurrently -r 'yarn run build:html' 'yarn run build:css' 'yarn run build:js'",
+        "build": "yarn run scrape:new && yarn run clean && mkdir html5 && concurrently -r 'yarn run build:html' 'yarn run build:css' 'yarn run build:js' 'yarn run build:data'",
         "build:html": "cargo run --quiet --release --bin html5stuck_renderer -- output/ html5/",
         "build:css": "postcss css/ --dir html5/css/",
         "build:js": "rollup --config --silent",
+        "build:data": "mkdirp html5/scraps2/ && cp misc-data/gamzsmallhonk.png html5/scraps2/",
         "serve": "yarn run build && yarn run serve:no-build",
         "serve:no-build": "serve -l 8080 html5/",
         "open": "yarn run build && yarn run open:no-build",
@@ -49,5 +50,8 @@
         "cover 99.5% in US and last 2 versions",
         "not ie > 0",
         "not dead"
-    ]
+    ],
+    "dependencies": {
+        "mkdirp": "^1.0.4"
+    }
 }

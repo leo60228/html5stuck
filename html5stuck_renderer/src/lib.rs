@@ -16,7 +16,9 @@ mod filters {
     }
 
     pub fn fix_domains(text: &str) -> askama::Result<String> {
-        Ok(text.replace("http://www.mspaintadventures.com", ""))
+        Ok(text
+            .replace("http://www.mspaintadventures.com", "")
+            .replace("http://mspaintadventures.com", ""))
     }
 }
 
